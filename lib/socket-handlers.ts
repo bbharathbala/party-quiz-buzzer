@@ -459,8 +459,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
           where: {
             roomId: socket.data.roomId,
             questionId: validatedData.questionId,
-          },
-          include: { player: true }
+          }
         });
 
         // Calculate distribution
