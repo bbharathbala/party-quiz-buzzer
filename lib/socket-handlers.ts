@@ -274,7 +274,27 @@ export function setupSocketHandlers(io: SocketIOServer) {
     socket.on('host:createRoom', async (data) => {
       try {
         const validatedData = HostCreateRoomSchema.parse(data);
-        const settings = { ...DEFAULT_ROOM_SETTINGS, ...validatedData.settings };
+        const settings: RoomSettings = {
+          allowAnswerChange: validatedData.settings?.allowAnswerChange ?? DEFAULT_ROOM_SETTINGS.allowAnswerChange,
+          speedBonus: validatedData.settings?.speedBonus ?? DEFAULT_ROOM_SETTINGS.speedBonus,
+          streakBonus: validatedData.settings?.streakBonus ?? DEFAULT_ROOM_SETTINGS.streakBonus,
+          teamMode: validatedData.settings?.teamMode ?? DEFAULT_ROOM_SETTINGS.teamMode,
+          buzzerTopN: validatedData.settings?.buzzerTopN ?? DEFAULT_ROOM_SETTINGS.buzzerTopN,
+          defaultTimeLimits: {
+            single: validatedData.settings?.defaultTimeLimits?.single ?? DEFAULT_ROOM_SETTINGS.defaultTimeLimits.single,
+            multi: validatedData.settings?.defaultTimeLimits?.multi ?? DEFAULT_ROOM_SETTINGS.defaultTimeLimits.multi,
+            text: validatedData.settings?.defaultTimeLimits?.text ?? DEFAULT_ROOM_SETTINGS.defaultTimeLimits.text,
+            poll: validatedData.settings?.defaultTimeLimits?.poll ?? DEFAULT_ROOM_SETTINGS.defaultTimeLimits.poll,
+            buzzer: validatedData.settings?.defaultTimeLimits?.buzzer ?? DEFAULT_ROOM_SETTINGS.defaultTimeLimits.buzzer,
+          },
+          points: {
+            single: validatedData.settings?.points?.single ?? DEFAULT_ROOM_SETTINGS.points.single,
+            multi: validatedData.settings?.points?.multi ?? DEFAULT_ROOM_SETTINGS.points.multi,
+            text: validatedData.settings?.points?.text ?? DEFAULT_ROOM_SETTINGS.points.text,
+            poll: validatedData.settings?.points?.poll ?? DEFAULT_ROOM_SETTINGS.points.poll,
+            buzzer: validatedData.settings?.points?.buzzer ?? DEFAULT_ROOM_SETTINGS.points.buzzer,
+          },
+        };
         
         const roomCode = generateRoomCode();
         const room = await prisma.room.create({
