@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Room {
+  id                 String   @id @default(cuid())
+  code               String   @unique
+  status             String   // "lobby" | "in_progress" | "paused" | "ended"
+  currentQuestionId  String?  // FK to Question when active
+  settingsJson       String   // serialized RoomSettings
+  createdAt          DateTime @default(now())
+  players            Player[]
+  rounds             Round[]
+  responses          Response[]
+  buzzes             Buzz[]
+  teams              Team[]
+}
+
+model Player {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+  nickname  String
+  avatar    String?
+  isHost    Boolean  @default(false)
+  teamId    String?
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([roomId, nickname])
+}
+
+model Team {
+  id      String @id @default(cuid())
+  roomId  String
+  room    Room   @relation(fields: [roomId], references: [id])
+  name    String
+  color   String
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  coverImageUrl String?
+  order         Int       @default(0)
+  questions     Question[]
+}
+
+model Question {
+  id                String   @id @default(cuid())
+  categoryId        String
+  category          Category @relation(fields: [categoryId], references: [id])
+  type              String   // "single" | "multi" | "buzzer" | "text" | "poll"
+  prompt            String
+  imageUrl          String?
+  audioUrl          String?
+  timeLimitSeconds  Int      @default(20)
+  points            Int      @default(100)
+  answerExplanation String?
+  order             Int      @default(0)
+  options           Option[]
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  text       String
+  imageUrl   String?
+  isCorrect  Boolean  @default(false)
+}
+
+model Round {
+  id             String   @id @default(cuid())
+  roomId         String
+  room           Room     @relation(fields: [roomId], references: [id])
+  name           String
+  questionIdsJson String  // ordered list of Question IDs
+  order          Int      @default(0)
+}
+
+model Response {
+  id          String   @id @default(cuid())
+  roomId      String
+  room        Room     @relation(fields: [roomId], references: [id])
+  questionId  String
+  playerId    String
+  optionIdsJson String? // for single/multi
+  textAnswer  String?   // for text
+  timeMs      Int
+  isCorrect   Boolean
+  createdAt   DateTime  @default(now())
+
+  @@index([roomId, questionId])
+}
+
+model Buzz {
+  id         String   @id @default(cuid())
+  roomId     String
+  room       Room     @relation(fields: [roomId], references: [id])
+  questionId String
+  playerId   String
+  rank       Int
+  timeMs     Int
+  createdAt  DateTime @default(now())
+
+  @@index([roomId, questionId])
+}

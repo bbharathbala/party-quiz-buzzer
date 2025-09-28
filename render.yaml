@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: party-quiz-buzzer
+    env: node
+    plan: starter
+    region: oregon
+    autoDeploy: true
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx tsx server.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:/data/dev.db
+      - key: ADMIN_PIN
+        sync: false
+      - key: ROOM_CODE_LENGTH
+        value: "5"
+      - key: MAX_PLAYERS_PER_ROOM
+        value: "100"
+      - key: NEXT_PUBLIC_APP_NAME
+        value: "Birthday Quiz"
+    disk:
+      name: sqlite_data
+      mountPath: /data
+      sizeGB: 1
