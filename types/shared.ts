@@ -75,6 +75,7 @@ export type RoomState = {
   teams: TeamPublic[];
   currentQuestion?: QuestionPublic;
   timeRemainingMs?: number;
+  questionStartTime?: number;
   settings: RoomSettings;
 };
 
