@@ -90,7 +90,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
           nickname: player.nickname,
           avatar: player.avatar || undefined,
           isHost: player.isHost,
-          teamId: player.teamId,
+          teamId: player.teamId || undefined,
           score: player.score,
         };
 
@@ -481,7 +481,7 @@ async function updateRoomState(roomCode: string) {
     nickname: p.nickname,
     avatar: p.avatar || undefined,
     isHost: p.isHost,
-    teamId: p.teamId,
+    teamId: p.teamId || undefined,
     score: p.score,
   }));
 
