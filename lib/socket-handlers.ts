@@ -362,14 +362,14 @@ export function setupSocketHandlers(io: SocketIOServer) {
             id: question.id,
             type: question.type,
             prompt: question.prompt,
-            imageUrl: question.imageUrl,
-            audioUrl: question.audioUrl,
+            imageUrl: question.imageUrl || undefined,
+            audioUrl: question.audioUrl || undefined,
             timeLimitSeconds: question.timeLimitSeconds,
             points: question.points,
             options: question.options.map(opt => ({
               id: opt.id,
               text: opt.text,
-              imageUrl: opt.imageUrl,
+              imageUrl: opt.imageUrl || undefined,
             })),
           };
           roomState.status = 'in_progress';
