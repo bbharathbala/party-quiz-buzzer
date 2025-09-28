@@ -88,7 +88,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
         const playerPublic: PlayerPublic = {
           id: player.id,
           nickname: player.nickname,
-          avatar: player.avatar,
+          avatar: player.avatar || undefined,
           isHost: player.isHost,
           teamId: player.teamId,
           score: player.score,
@@ -479,7 +479,7 @@ async function updateRoomState(roomCode: string) {
   const players: PlayerPublic[] = room.players.map(p => ({
     id: p.id,
     nickname: p.nickname,
-    avatar: p.avatar,
+    avatar: p.avatar || undefined,
     isHost: p.isHost,
     teamId: p.teamId,
     score: p.score,
