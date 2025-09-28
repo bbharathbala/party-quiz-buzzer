@@ -40,6 +40,17 @@ export type TeamPublic = {
   score: number;
 };
 
+export type Question = {
+  id: string;
+  type: string;
+  prompt: string;
+  imageUrl?: string;
+  audioUrl?: string;
+  timeLimitSeconds: number;
+  points: number;
+  options?: OptionPublic[];
+};
+
 export type QuestionPublic = {
   id: string;
   type: string;
