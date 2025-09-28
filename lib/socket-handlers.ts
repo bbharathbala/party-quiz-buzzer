@@ -170,7 +170,21 @@ export function setupSocketHandlers(io: SocketIOServer) {
 
         // Update player score
         if (isCorrect) {
-          const score = calculateScore(question, timeMs, roomStates.get(roomCode)?.settings);
+          const questionForScoring: Question = {
+            id: question.id,
+            type: question.type,
+            prompt: question.prompt,
+            imageUrl: question.imageUrl || undefined,
+            audioUrl: question.audioUrl || undefined,
+            timeLimitSeconds: question.timeLimitSeconds,
+            points: question.points,
+            options: question.options.map(opt => ({
+              id: opt.id,
+              text: opt.text,
+              imageUrl: opt.imageUrl || undefined,
+            }))
+          };
+          const score = calculateScore(questionForScoring, timeMs, roomStates.get(roomCode)?.settings);
           await prisma.player.update({
             where: { id: socket.data.playerId },
             data: { score: { increment: score } }
