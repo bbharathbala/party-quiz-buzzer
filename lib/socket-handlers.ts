@@ -16,6 +16,7 @@ import {
   RoomState,
   PlayerPublic,
   QuestionPublic,
+  Question,
   LeaderboardData,
   DEFAULT_ROOM_SETTINGS,
 } from '../types/shared';
