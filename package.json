@@ -18,7 +18,11 @@
     "@prisma/client": "^5.7.1",
     "@types/node": "^20.10.5",
     "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.0.4",
     "next": "14.0.4",
     "postcss": "^8.4.32",
     "prisma": "^5.7.1",
@@ -32,11 +36,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "14.0.4",
     "prettier": "^3.1.1",
     "tsx": "^4.6.2",
     "vitest": "^1.1.0"
