@@ -144,7 +144,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
         // Validate answer based on question type
         let isCorrect = false;
         if (question.type === 'single' && validatedData.optionIds?.length === 1) {
-          const selectedOption = question.options.find(o => o.id === validatedData.optionIds[0]);
+          const selectedOption = question.options.find(o => o.id === validatedData.optionIds![0]);
           isCorrect = selectedOption?.isCorrect || false;
         } else if (question.type === 'multi' && validatedData.optionIds) {
           const correctOptions = question.options.filter(o => o.isCorrect);
