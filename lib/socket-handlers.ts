@@ -120,12 +120,21 @@ export function setupSocketHandlers(io: SocketIOServer) {
 
         // Get current question
         const room = await prisma.room.findUnique({
-          where: { id: socket.data.roomId },
-          include: { currentQuestion: { include: { options: true } } }
+          where: { id: socket.data.roomId }
         });
 
-        if (!room?.currentQuestion || room.currentQuestion.id !== validatedData.questionId) {
+        if (!room?.currentQuestionId || room.currentQuestionId !== validatedData.questionId) {
           socket.emit('server:error', { code: 'INVALID_QUESTION', message: 'Question not active' });
+          return;
+        }
+
+        const question = await prisma.question.findUnique({
+          where: { id: validatedData.questionId },
+          include: { options: true }
+        });
+
+        if (!question) {
+          socket.emit('server:error', { code: 'QUESTION_NOT_FOUND', message: 'Question not found' });
           return;
         }
 
@@ -134,14 +143,14 @@ export function setupSocketHandlers(io: SocketIOServer) {
 
         // Validate answer based on question type
         let isCorrect = false;
-        if (room.currentQuestion.type === 'single' && validatedData.optionIds?.length === 1) {
-          const selectedOption = room.currentQuestion.options.find(o => o.id === validatedData.optionIds[0]);
+        if (question.type === 'single' && validatedData.optionIds?.length === 1) {
+          const selectedOption = question.options.find(o => o.id === validatedData.optionIds[0]);
           isCorrect = selectedOption?.isCorrect || false;
-        } else if (room.currentQuestion.type === 'multi' && validatedData.optionIds) {
-          const correctOptions = room.currentQuestion.options.filter(o => o.isCorrect);
+        } else if (question.type === 'multi' && validatedData.optionIds) {
+          const correctOptions = question.options.filter(o => o.isCorrect);
           isCorrect = correctOptions.length === validatedData.optionIds.length &&
             correctOptions.every(opt => validatedData.optionIds!.includes(opt.id));
-        } else if (room.currentQuestion.type === 'text' && validatedData.textAnswer) {
+        } else if (question.type === 'text' && validatedData.textAnswer) {
           // For text answers, we'll need manual verification or simple matching
           isCorrect = false; // Will be set by host
         }
@@ -161,7 +170,7 @@ export function setupSocketHandlers(io: SocketIOServer) {
 
         // Update player score
         if (isCorrect) {
-          const score = calculateScore(room.currentQuestion, timeMs, roomStates.get(roomCode)?.settings);
+          const score = calculateScore(question, timeMs, roomStates.get(roomCode)?.settings);
           await prisma.player.update({
             where: { id: socket.data.playerId },
             data: { score: { increment: score } }
